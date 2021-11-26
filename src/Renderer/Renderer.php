@@ -54,6 +54,7 @@ class Renderer
         EmphasisRenderer::class,
         LiteralRenderer::class,
         FilenameRenderer::class,
+        WarningRenderer::class,
     ];
 
     /**
@@ -73,26 +74,21 @@ class Renderer
 
     public function process(string $outputDir): void
     {
-        foreach($this->sourceDocument->getElementsByTagName("sect1") as $article) {
-            $id = $article->attributes["xml.id"]?->value;
-            if(!$id || $id === "false") continue;
-            if(!$this->matches($id)) continue;
-            $this->logger->info("Processing $id");
-            $destinationDocument = new DOMDocument();
-            $destinationDocument->preserveWhiteSpace = true;
-            $rendererState = new RendererState(
-                $article,
-                $destinationDocument
-            );
-            $outputState = $this->processNode($rendererState);
-            $outputState->destinationDocument->saveHTMLFile("$outputDir/$id.php");
-        }
+        $destinationDocument = new DOMDocument();
+        $rendererState = new RendererState(
+            $this->sourceDocument,
+            $destinationDocument
+        );
+        $outputState = $this->processNode($rendererState);
+        // TODO: this should split out to multiple files - can't figure out where they should split for the life of me
+        $outputState->destinationDocument->saveHTMLFile("$outputDir/index.html");
     }
 
     private function processNode(
-        RendererState $rendererState
+        RendererState $rendererState,
     ): RendererState
     {
+        // Some HTML beautification to save my sanity
         if($rendererState->tagLevel > 0) {
             $rendererState->destinationNode->appendChild($rendererState->destinationDocument->createTextNode("\n" . str_repeat("\t", $rendererState->tagLevel)));
         }

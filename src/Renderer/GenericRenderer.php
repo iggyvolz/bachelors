@@ -2,8 +2,9 @@
 
 namespace iggyvolz\Bachelors\Renderer;
 
-use Psr\Log\NullLogger;
-
+/**
+ * Generic fallback renderer so that we can make progress without converting every tag
+ */
 class GenericRenderer extends TagRenderer
 {
     private array $warnedTags = [];
