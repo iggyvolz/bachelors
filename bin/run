@@ -1,0 +1,7 @@
+#!/usr/bin/env php
+<?php
+
+use iggyvolz\Bachelors\CLI\CLI;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+(new CLI())->run();
